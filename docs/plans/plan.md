@@ -1,5 +1,5 @@
 # Plan
 
-- Refresh the site content section with a knowledge-panel layout
-- Add localized panel metadata needed by the new visual treatment
+- Refresh the testimonials section into a dual marquee review wall
+- Preserve existing feedback copy with tighter card styling
 - Run format and code quality checks
