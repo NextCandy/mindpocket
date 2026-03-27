@@ -29,10 +29,10 @@ export default function ContentSection() {
               <span className="inline-flex rounded-full border border-sky-200/70 bg-white/85 px-4 py-1.5 text-sm text-sky-700 shadow-sm">
                 {t.content.badge}
               </span>
-              <h2 className="max-w-xl text-4xl font-medium tracking-tight text-balance lg:text-5xl">
+              <h2 className="max-w-lg text-4xl font-medium tracking-tight text-balance lg:text-[4.2rem] lg:leading-[0.94]">
                 {t.content.title}
               </h2>
-              <div className="max-w-xl space-y-4 text-base leading-7 text-muted-foreground">
+              <div className="max-w-lg space-y-4 text-base leading-8 text-muted-foreground">
                 <p>{t.content.paragraph1}</p>
                 <p>{t.content.paragraph2}</p>
               </div>
@@ -55,24 +55,77 @@ export default function ContentSection() {
                 </div>
 
                 <div className="relative rounded-[1.5rem] border border-slate-200/80 bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.18),transparent_45%),linear-gradient(180deg,rgba(248,250,252,0.96),rgba(241,245,249,0.9))] p-3">
-                  <div className="grid min-h-[26rem] content-end gap-3 sm:grid-cols-2">
-                    {t.content.highlights.map((item, index) => {
-                      const Icon = highlightIcons[index]
-                      return (
-                        <div
-                          className="rounded-2xl border border-white/70 bg-white/88 p-4 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.55)] backdrop-blur-sm"
-                          key={item.title}
-                        >
-                          <div className="mb-3 flex items-center gap-3">
-                            <div className="flex size-9 items-center justify-center rounded-xl bg-sky-100 text-sky-700">
+                  <div className="space-y-3">
+                    <div className="rounded-[1.4rem] border border-white/75 bg-white/88 p-4 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.55)] backdrop-blur-sm">
+                      <div className="mb-4 flex items-center justify-between gap-3">
+                        <div className="inline-flex items-center gap-2 rounded-full bg-sky-50 px-3 py-1 text-xs text-sky-700">
+                          <Sparkles className="size-3.5" />
+                          <span>{t.content.highlights[0].title}</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] text-slate-500">
+                            AI
+                          </span>
+                          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] text-slate-500">
+                            Search
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-3">
+                        <p className="text-[11px] uppercase tracking-[0.18em] text-slate-400">
+                          Query
+                        </p>
+                        <p className="mt-2 text-sm text-slate-700">
+                          最近收藏里有哪些关于 AI Agent 工作流的文章？
+                        </p>
+                      </div>
+
+                      <div className="mt-3 grid gap-3 sm:grid-cols-[1.2fr_0.8fr]">
+                        <div className="rounded-2xl border border-slate-200/80 bg-white p-3">
+                          <p className="text-[11px] uppercase tracking-[0.18em] text-slate-400">
+                            Summary
+                          </p>
+                          <p className="mt-2 text-sm leading-6 text-slate-700">
+                            {t.content.highlights[0].detail}
+                          </p>
+                        </div>
+                        <div className="rounded-2xl border border-slate-200/80 bg-white p-3">
+                          <p className="text-[11px] uppercase tracking-[0.18em] text-slate-400">
+                            Tags
+                          </p>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            <span className="rounded-full bg-sky-50 px-2.5 py-1 text-xs text-sky-700">
+                              ai-agent
+                            </span>
+                            <span className="rounded-full bg-cyan-50 px-2.5 py-1 text-xs text-cyan-700">
+                              workflow
+                            </span>
+                            <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-600">
+                              retrieval
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      {t.content.highlights.slice(1).map((item, index) => {
+                        const Icon = highlightIcons[index + 1]
+                        return (
+                          <div
+                            className="rounded-2xl border border-white/70 bg-white/88 p-4 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.55)] backdrop-blur-sm"
+                            key={item.title}
+                          >
+                            <div className="mb-3 flex size-9 items-center justify-center rounded-xl bg-sky-100 text-sky-700">
                               <Icon className="size-4" />
                             </div>
                             <p className="text-sm font-medium text-slate-900">{item.title}</p>
+                            <p className="mt-2 text-xs leading-5 text-slate-600">{item.detail}</p>
                           </div>
-                          <p className="text-xs leading-5 text-slate-600">{item.detail}</p>
-                        </div>
-                      )
-                    })}
+                        )
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>
