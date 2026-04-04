@@ -79,11 +79,24 @@ This is a pure **VIBE CODING** project:
 
 ## 🐳 Docker Deployment
 
+> Docker deployment covers only the **Web application** (`apps/web`). Mobile app and browser extension are not included.
+
+There are two Docker-based deployment modes:
+
+| Mode | Command | Use case |
+|------|---------|----------|
+| **Full stack** | `docker compose up -d` | Self-hosting / production — runs the app + PostgreSQL together |
+| **DB only** | `docker compose up -d postgres` | Local development — run just pgvector/PostgreSQL, start the app with `pnpm dev` |
+
 ### Prerequisites
 
 - [Docker](https://docs.docker.com/get-docker/) & [Docker Compose](https://docs.docker.com/compose/install/)
 
-### Quick Start
+---
+
+### Mode 1 — Full Stack (App + Database)
+
+Starts both the Next.js web app and a pgvector/PostgreSQL 17 database in containers. Best for self-hosting.
 
 ```bash
 # Copy and edit environment variables
@@ -95,16 +108,14 @@ docker compose up -d
 
 Visit http://localhost:3000 to start using.
 
-### Services
+**Services started:**
 
 | Service | Description | Default Port |
 |---------|-------------|--------------|
 | `mindpocket` | Next.js Web App | 3000 |
 | `postgres` | pgvector/PostgreSQL 17 | 5432 (internal only) |
 
-### Environment Variables
-
-Key variables (see `.env.example` for full list):
+**Environment Variables** (see `.env.example` for full list):
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -114,11 +125,9 @@ Key variables (see `.env.example` for full list):
 | `POSTGRES_USER` | `mindpocket` | Built-in PostgreSQL username |
 | `POSTGRES_PASSWORD` | `mindpocket` | Built-in PostgreSQL password |
 | `POSTGRES_DB` | `mindpocket` | Built-in PostgreSQL database name |
-| `DATABASE_URL` | auto-generated | External DB connection string; overrides built-in PostgreSQL config |
+| `DATABASE_URL` | auto-generated | External DB connection string; overrides built-in PostgreSQL |
 
-### Using an External Database
-
-Set `DATABASE_URL` directly:
+**Using an External Database:**
 
 ```bash
 DATABASE_URL=postgresql://user:password@db.example.com:5432/mindpocket?sslmode=require
@@ -126,118 +135,51 @@ DATABASE_URL=postgresql://user:password@db.example.com:5432/mindpocket?sslmode=r
 
 Or configure individual parts: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`.
 
-### Common Commands
+**Common Commands:**
 
 ```bash
-# Start in background
-docker compose up -d
-
-# View logs
-docker compose logs -f
-
-# View web service logs only
-docker compose logs -f mindpocket
-
-# Stop services
-docker compose down
-
-# Stop and remove data volumes
-docker compose down -v
-
-# Rebuild image
-docker compose up -d --build
+docker compose up -d                   # Start in background
+docker compose logs -f                 # View logs
+docker compose logs -f mindpocket      # Web service logs only
+docker compose down                    # Stop services
+docker compose down -v                 # Stop and remove data volumes
+docker compose up -d --build           # Rebuild image
 ```
 
-### Container Startup Flow
+> **Port conflict?** If port `3000` is already in use on your machine, set a different port in `.env`:
+> ```env
+> PORT=3001
+> NEXT_PUBLIC_APP_URL=http://localhost:3001
+> ```
 
-On startup, the container automatically (see `docker-entrypoint.sh`):
+**Container Startup Flow** (see `docker-entrypoint.sh`):
 
 1. Assembles `DATABASE_URL` from env vars (if not provided directly)
 2. Ensures PostgreSQL extensions are installed (`pgvector`, etc.)
 3. Pushes database schema via Drizzle ORM
 4. Starts the Next.js standalone server
 
-## 🐳 Docker Deployment (Web Only)
+---
 
-> Docker deployment currently covers only the **Web application** (`apps/web`). Mobile app and browser extension are not included.
+### Mode 2 — DB Only (Local Development)
 
-### Prerequisites
-
-- [Docker](https://docs.docker.com/get-docker/) & [Docker Compose](https://docs.docker.com/compose/install/)
-
-### Quick Start
+Starts only the pgvector/PostgreSQL container. The app runs locally with `pnpm dev`. Best for development.
 
 ```bash
-# Copy and edit environment variables
-cp .env.example .env
-
-# Build and start all services
-docker compose up -d
+docker compose up -d postgres
 ```
 
-Visit http://localhost:3000 to start using.
+Default local connection string:
 
-### Services
-
-| Service | Description | Default Port |
-|---------|-------------|--------------|
-| `mindpocket` | Next.js Web App (`apps/web`) | 3000 |
-| `postgres` | pgvector/PostgreSQL 17 | 5432 (internal only) |
-
-### Environment Variables
-
-Key variables (see `.env.example` for full list):
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT` | `3000` | Host port for the web service |
-| `NEXT_PUBLIC_APP_URL` | `http://localhost:3000` | Public URL of the app |
-| `BETTER_AUTH_SECRET` | `mindpocket-local-dev-secret` | Auth secret, **must replace in production** |
-| `POSTGRES_USER` | `mindpocket` | Built-in PostgreSQL username |
-| `POSTGRES_PASSWORD` | `mindpocket` | Built-in PostgreSQL password |
-| `POSTGRES_DB` | `mindpocket` | Built-in PostgreSQL database name |
-| `DATABASE_URL` | auto-generated | External DB connection string; overrides built-in PostgreSQL config |
-
-### Using an External Database
-
-Set `DATABASE_URL` directly:
-
-```bash
-DATABASE_URL=postgresql://user:password@db.example.com:5432/mindpocket?sslmode=require
+```env
+DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/mindpocket
 ```
 
-Or configure individual parts: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`.
+If the container fails to start, check:
 
-### Common Commands
-
-```bash
-# Start in background
-docker compose up -d
-
-# View logs
-docker compose logs -f
-
-# View web service logs only
-docker compose logs -f mindpocket
-
-# Stop services
-docker compose down
-
-# Stop and remove data volumes
-docker compose down -v
-
-# Rebuild image
-docker compose up -d --build
-```
-
-### Container Startup Flow
-
-On startup, the container automatically (see `docker-entrypoint.sh`):
-
-1. Assembles `DATABASE_URL` from env vars (if not provided directly)
-2. Ensures PostgreSQL extensions are installed (`pgvector`, etc.)
-3. Pushes database schema via Drizzle ORM
-4. Starts the Next.js standalone server
+- Port `5432` is free
+- `DATABASE_URL` points to the local container
+- The container image includes `pgvector`
 
 ## 💻 Local Development
 
@@ -256,7 +198,7 @@ cd mindpocket
 # Install dependencies
 pnpm install
 
-# Start local PostgreSQL 18 with pgvector
+# Start local PostgreSQL with pgvector (Docker Mode 2)
 docker compose up -d postgres
 
 # Configure environment
@@ -273,27 +215,6 @@ pnpm dev
 ```
 
 Visit http://127.0.0.1:3000 to start using.
-
-### Local Database
-
-MindPocket expects a standard PostgreSQL `DATABASE_URL`. For local development, the repository includes a Docker Compose service that starts PostgreSQL 18 with `pgvector` enabled.
-
-```bash
-docker compose up -d postgres
-```
-
-Default local connection:
-
-```env
-DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/mindpocket
-```
-
-If `pnpm db:bootstrap` fails, check these first:
-
-- Docker PostgreSQL is running
-- Port `5432` is free
-- `DATABASE_URL` points to the local container
-- The container image includes `pgvector`
 
 ### Commands
 

@@ -22,6 +22,7 @@ services:
   mindpocket:
     image: mindpocket:latest
     container_name: mindpocket
+    pull_policy: never
     build:
       context: .
       target: runner

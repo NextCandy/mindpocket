@@ -50,7 +50,7 @@ if [ -z "${BETTER_AUTH_URL:-}" ]; then
   export BETTER_AUTH_URL="$NEXT_PUBLIC_APP_URL"
 fi
 
-cd /workspace/apps/web
+cd /migrate
 
 run_with_retry 30 2 npx tsx scripts/ensure-extensions.ts
 run_with_retry 30 2 npx drizzle-kit push --force
